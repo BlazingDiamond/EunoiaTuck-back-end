@@ -29,7 +29,7 @@ urlpatterns = [
     path("products/", views.ProductsListView.as_view(), name="product-list"),
     path(
         "account/",
-        views.AccountViewSet.as_view({"get": "list", "post": "create"}),
-        name="account-list-create",
+        views.AccountViewSet.as_view(),
+        name="accounts",
     ),
 ]

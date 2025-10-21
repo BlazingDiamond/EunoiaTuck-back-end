@@ -95,8 +95,9 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
+    # user = serializers.StringRelatedField()
 
     class Meta:
         model = models.Account
-        fields = "__all__"
+        fields = ("id", "balance", "user")
+        read_only_fields = ["user"]

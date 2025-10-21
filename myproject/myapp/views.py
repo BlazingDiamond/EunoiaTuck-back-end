@@ -2,7 +2,7 @@
 from django.contrib.auth import authenticate, login
 
 from rest_framework import generics, viewsets, status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -91,7 +91,13 @@ class ProductsListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-class AccountViewSet(viewsets.ModelViewSet):
-    queryset = models.Account.objects.all()
+class AccountViewSet(generics.ListCreateAPIView):
+    permission_classes = IsAuthenticated
+    # queryset = models.Account.objects.all()
     serializer_class = serializers.AccountSerializer
-    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return models.Account.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
