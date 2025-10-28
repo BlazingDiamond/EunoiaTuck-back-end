@@ -92,7 +92,7 @@ class ProductsListView(generics.ListAPIView):
 
 
 class AccountViewSet(generics.ListCreateAPIView):
-    permission_classes = IsAuthenticated
+    permission_classes = [IsAuthenticated]
     # queryset = models.Account.objects.all()
     serializer_class = serializers.AccountSerializer
 
