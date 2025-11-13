@@ -8,6 +8,7 @@ from .views import (
     RegisterView,
     LoginView,
     ProductViewSet,
+    OrdersViewSet,
 )
 from myapp import views
 
@@ -32,4 +33,11 @@ urlpatterns = [
         views.AccountViewSet.as_view(),
         name="accounts",
     ),
+    path("account/deposit/", views.DepositView.as_view(), name="account-deposit"),
+    path(
+        "account/withdrawel/",
+        views.WithdrawelView.as_view(),
+        name="account-widthdrawel",
+    ),
+    path("orders/", OrdersViewSet.as_view(), name="order-list-create"),
 ]

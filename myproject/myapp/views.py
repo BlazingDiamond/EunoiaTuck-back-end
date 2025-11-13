@@ -1,6 +1,7 @@
 # myapp/views.py
 from django.contrib.auth import authenticate, login
-
+import json
+from django.http import JsonResponse, HttpResponse
 from rest_framework import generics, viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -101,3 +102,93 @@ class AccountViewSet(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class DepositView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.DepositSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        deposit_amount = serializer.validated_data["depositAmount"]
+
+        try:
+            account = models.Account.objects.get(user=self.request.user)
+            account.balance += deposit_amount
+            account.save()
+
+            return Response(
+                {"detail": "Deposit successful", "new_balance": account.balance},
+                status=status.HTTP_200_OK,
+            )
+        except models.Account.DoesNotExist:
+            return Response(
+                {"detail": "Account not found for user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            print(f"Database error during deposit: {e}")
+            return Response(
+                {"detail": "An internal error occurred during the transaction."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class WithdrawelView(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = serializers.WithdrawelSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        cart_Total = serializer.validated_data["cart_Total"]
+
+        try:
+            account = models.Account.objects.get(user=self.request.user)
+
+            from decimal import Decimal
+
+            withdrawal_amount = Decimal(str(cart_Total))
+
+            if account.balance < withdrawal_amount:
+                return Response(
+                    {"detail": "Insufficient balance."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            account.balance -= withdrawal_amount
+            account.save()
+
+            return Response(
+                {
+                    "detail": "withdrawel successful",
+                    "new_balance": float(account.balance),
+                },
+                status=status.HTTP_200_OK,
+            )
+        except models.Account.DoesNotExist:
+            return Response(
+                {"detail": "Account not found for user."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            import traceback
+
+            print(f"Database error during withdrawel: {e}")
+            print(f"Traceback: {traceback.format_exc()}")
+            return Response(
+                {"detail": f"An internal error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+class OrdersViewSet(generics.ListCreateAPIView):
+    serializer_class = serializers.OrdersSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return models.Order.objects.filter(user=self.request.user).order_by(
+            "-created_at"
+        )

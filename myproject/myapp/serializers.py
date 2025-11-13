@@ -1,4 +1,5 @@
 # myapp/serializers.py
+from django.db import transaction
 from rest_framework import serializers
 from .models import UserProfile, Post
 from myapp import models
@@ -21,13 +22,12 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
-        # gemini helped with this part
+
         if email and password:
             try:
-                # 1. Look up the user by email using the correct User model (from get_user_model)
                 user = User.objects.get(email__exact=email)
             except User.DoesNotExist:
-                user = None  # User not found
+                user = None
 
             # 2. Check if the user was found AND if the password is correct
             if user is None or not user.check_password(password):
@@ -101,3 +101,81 @@ class AccountSerializer(serializers.ModelSerializer):
         model = models.Account
         fields = ("id", "balance", "user")
         read_only_fields = ["user"]
+
+
+class DepositSerializer(serializers.Serializer):
+    depositAmount = serializers.DecimalField(
+        max_digits=10, decimal_places=2, required=True
+    )
+
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Deposit amount must be positive.")
+        return value
+
+
+class WithdrawelSerializer(serializers.Serializer):
+    cart_Total = serializers.DecimalField(
+        max_digits=10, decimal_places=2, required=True
+    )
+
+    def validate_cart_Total(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("withdrawel amount must be positive.")
+        return value
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    product_id = serializers.IntegerField(write_only=True)
+
+    id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = models.OrderItem
+        fields = ["product_id", "quantity"]
+
+
+class OrdersSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True, write_only=True)
+
+    id = serializers.IntegerField(read_only=True)
+    user = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = models.Order
+        fields = ["id", "user", "status", "order_date", "total_price", "items"]
+        read_only_fields = ["status", "total_price", "order_date"]
+
+    def create(self, validated_data):
+        order_items_data = validated_data.pop("items")
+
+        user = self.context["request"].user
+        total_price = 0
+
+        with transaction.atomic():
+            order = models.Order.objects.create(user=user, **validated_data)
+
+            for item_data in order_items_data:
+                product_id = item_data["product_id"]
+                quantity = item_data["quantity"]
+
+                try:
+                    product = models.Product.objects.get(id=product_id)
+                except models.Product.DoesNotExist:
+                    raise serializers.ValidationError(
+                        f"Product with ID {product_id} does not exist."
+                    )
+
+                models.OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=quantity,
+                    price=product.price,
+                )
+
+                total_price += product.price * quantity
+
+            order.total_price = total_price
+            order.save()
+
+            return order
