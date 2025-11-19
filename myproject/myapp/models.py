@@ -139,6 +139,6 @@ class OrderItem(models.Model):
 
     price = models.DecimalField(max_digits=6, decimal_places=2)
     quantity = models.IntegerField(default=1)
-    
+
     def __str__(self):
         return f"{self.quantity} x {self.product.name} for Order {self.order.id}"

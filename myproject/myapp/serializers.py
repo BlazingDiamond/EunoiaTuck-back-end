@@ -128,7 +128,7 @@ class WithdrawelSerializer(serializers.Serializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(write_only=True)
 
-    id = serializers.IntegerField(write_only=True)
+    # id = serializers.IntegerField(write_only=True)  holding for later use
 
     class Meta:
         model = models.OrderItem
