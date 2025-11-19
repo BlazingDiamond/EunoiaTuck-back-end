@@ -96,7 +96,7 @@ class Product(models.Model):
         ("sweets", "Sweets"),
         ("food", "Food"),
     ]
-    name = models.CharField(max_length=100)
+    name = models.CharField()
     type = models.CharField(choices=TYPE_CHOICES)
     image = models.ImageField(upload_to="product_images/", blank=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
