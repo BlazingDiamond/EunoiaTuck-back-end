@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 User = models.User
 
 
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer(serializers.Serializer):  # needed ai for this one
     email = serializers.CharField(label="Email", write_only=True)
     password = serializers.CharField(
         label="Password",
@@ -64,22 +64,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
         )
         return user
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField()
-
-    class Meta:
-        model = UserProfile
-        fields = "__all__"
-
-
-class PostSerializer(serializers.ModelSerializer):
-    author = serializers.StringRelatedField()
-
-    class Meta:
-        model = Post
-        fields = "__all__"
 
 
 class ProductSerializer(serializers.ModelSerializer):

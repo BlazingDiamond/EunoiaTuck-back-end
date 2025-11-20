@@ -22,12 +22,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Main admin panel
     path("admin/", admin.site.urls),
-    # Include all URLs from your app
-    path("api/", include("myapp.urls")),
-    # Redirect base URL to the admin panel
+    path("api/", include("myapp.urls")),  # some simple url paths for api
     path("", RedirectView.as_view(url="admin/", permanent=False)),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# cements the media url for accessing uploaded files in development mode also hi

@@ -41,3 +41,4 @@ urlpatterns = [
     ),
     path("orders/", OrdersViewSet.as_view(), name="order-list-create"),
 ]
+# just some paths

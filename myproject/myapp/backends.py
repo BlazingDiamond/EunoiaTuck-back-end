@@ -7,12 +7,10 @@ from .models import User
 class EmailBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            # Look up the user by email
             user = User.objects.get(email=username)
         except User.DoesNotExist:
             return None
 
-        # Check the password
         if user.check_password(password):
             return user
         return None
@@ -22,3 +20,7 @@ class EmailBackend(BaseBackend):
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
+
+
+# Custom authentication backend to allow users to log in using their email address
+# #though not certain if it works since im using a different system for auth now

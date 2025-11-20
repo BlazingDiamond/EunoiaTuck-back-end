@@ -36,7 +36,9 @@ class RegisterView(generics.CreateAPIView):
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(
+        self, request, *args, **kwargs
+    ):  # goes from validation to being able to see the information we need
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
@@ -55,27 +57,9 @@ class LoginView(generics.GenericAPIView):
                     "username": user.username,
                     "email": user.email,
                 },
-            },
+            },  # this is essential for the front end as i need all the info here especially the token
             status=status.HTTP_200_OK,
         )
-
-
-class UserProfileListCreate(generics.ListCreateAPIView):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = [AllowAny]
-
-
-class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = [AllowAny]
-
-
-class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = [AllowAny]
 
 
 class ProductViewSet(viewsets.ModelViewSet):

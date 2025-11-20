@@ -22,13 +22,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-4k4$^djxjjn0oraphxg6ra5sca^4c(&no7^iy@2lqr4xj=@7-^"
+SECRET_KEY = "django-insecure-4k4$^djxjjn0oraphxg6ra5sca^4c(&no7^iy@2lqr4xj=@7-^"  # not certain how to hide this on aws
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "13.50.171.93",
+    "13.50.171.93",  # deployed back end ip
     "192.168.0.21",
     "yourdomain.com",
     ".amazonaws.com",

@@ -8,7 +8,9 @@ from django.contrib.auth.models import (
 from django.contrib.auth.models import BaseUserManager
 
 
-class CustomUserManager(BaseUserManager):
+class CustomUserManager(
+    BaseUserManager
+):  # custom user management, needed a tutorial for this one
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email must be set as the primary identifier")
@@ -24,7 +26,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_staff", True)  # making some hierarchies
         extra_fields.setdefault("is_superuser", True)
 
         if extra_fields.get("is_staff") is not True:
@@ -35,7 +37,12 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(username, email, password, **extra_fields)
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+# this isnt the actual user model just a manager for it
+
+
+class User(
+    AbstractBaseUser, PermissionsMixin
+):  # needed this to added custom fields like balance
     username = models.CharField(max_length=150, unique=False, null=True, blank=True)
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
@@ -62,31 +69,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = "email"
-
+    # the username is the email, so no user is the same, but orders may be confusing as a result as some people dont have the same email and name
     REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
         return self.email
-
-
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    bio = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.user.username
-
-
-class Post(models.Model):
-    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.title
 
 
 class Product(models.Model):

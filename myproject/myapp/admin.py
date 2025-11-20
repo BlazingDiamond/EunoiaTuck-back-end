@@ -14,3 +14,4 @@ admin.site.register(models.Product)
 admin.site.register(models.Account)
 admin.site.register(models.Order)
 admin.site.register(models.OrderItem)
+# these all show up on the admin site
