@@ -2,9 +2,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    UserProfileListCreate,
-    UserProfileDetail,
-    PostViewSet,
     RegisterView,
     LoginView,
     ProductViewSet,

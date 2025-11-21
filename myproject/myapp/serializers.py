@@ -1,7 +1,6 @@
 # myapp/serializers.py
 from django.db import transaction
 from rest_framework import serializers
-from .models import UserProfile, Post
 from myapp import models
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
