@@ -76,6 +76,26 @@ class User(
         return self.email
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    bio = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+class Post(models.Model):
+    author = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
 class Product(models.Model):
     TYPE_CHOICES = [
         ("drinks", "Drinks"),

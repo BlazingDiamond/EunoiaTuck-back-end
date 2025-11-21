@@ -4,6 +4,7 @@ from rest_framework import serializers
 from myapp import models
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
+from .models import UserProfile, Post
 
 User = models.User
 
@@ -63,6 +64,22 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data["password"],
         )
         return user
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = UserProfile
+        fields = "__all__"
+
+
+class PostSerializer(serializers.ModelSerializer):
+    author = serializers.StringRelatedField()
+
+    class Meta:
+        model = Post
+        fields = "__all__"
 
 
 class ProductSerializer(serializers.ModelSerializer):

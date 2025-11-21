@@ -1,11 +1,15 @@
 # myapp/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
 from .views import (
     RegisterView,
     LoginView,
     ProductViewSet,
     OrdersViewSet,
+    UserProfileListCreate,
+    UserProfileDetail,
+    PostViewSet,
 )
 from myapp import views
 

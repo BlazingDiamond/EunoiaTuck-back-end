@@ -7,7 +7,10 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
+from .models import UserProfile, Post
 from .serializers import (
+    UserProfileSerializer,
+    PostSerializer,
     RegisterSerializer,
     LoginSerializer,
 )
@@ -57,6 +60,24 @@ class LoginView(generics.GenericAPIView):
             },  # this is essential for the front end as i need all the info here especially the token
             status=status.HTTP_200_OK,
         )
+
+
+class UserProfileListCreate(generics.ListCreateAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [AllowAny]
+
+
+class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [AllowAny]
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [AllowAny]
 
 
 class ProductViewSet(viewsets.ModelViewSet):
