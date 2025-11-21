@@ -33,7 +33,7 @@ DEBUG = True
 #     "yourdomain.com",
 #     ".amazonaws.com",
 # ]
-Allowed_Hosts = ["*"]
+Allowed_Hosts = ["13.50.171.93"]
 
 # Application definition
 
